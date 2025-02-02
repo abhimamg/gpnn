@@ -110,13 +110,6 @@ The model provides:
 * Training metrics (NLL, MSE)
 * Visualization of predictions with uncertainty bounds
 
-```
-Epoch 10/30, NLL = -89.4995, Train MSE = 0.0072, Val MSE = 0.0097
-Epoch 20/30, NLL = -105.1158, Train MSE = 0.0070, Val MSE = 0.0096
-Epoch 30/30, NLL = -118.8000, Train MSE = 0.0067, Val MSE = 0.0099
-```
-
-
 ### Visualization
 The `plot_gp_predictions` function visualizes:
 
