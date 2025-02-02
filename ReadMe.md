@@ -75,12 +75,9 @@ for epoch in range(epochs):
 
 # Evaluate on validation set.
 mu_val, var_val = gp_rbf.predict(X_val)
-print("\nFinal Validation set predictions:")
-print("Mean shape:", mu_val.shape, "Var shape:", var_val.shape)
 
 # Predict on grid.
 mu_rbf, var_rbf = gp_rbf.predict(grid)
-print("RBF kernel - mean shape:", mu_rbf.shape, "var shape:", var_rbf.shape)
 
 # Plot using separate function.
 plot_gp_predictions(X_train, y_train, grid, mu_rbf, var_rbf,
@@ -117,10 +114,6 @@ The model provides:
 Epoch 10/30, NLL = -89.4995, Train MSE = 0.0072, Val MSE = 0.0097
 Epoch 20/30, NLL = -105.1158, Train MSE = 0.0070, Val MSE = 0.0096
 Epoch 30/30, NLL = -118.8000, Train MSE = 0.0067, Val MSE = 0.0099
-
-Final Validation set predictions:
-Mean shape: torch.Size([20, 1]) Var shape: torch.Size([20])
-RBF kernel - mean shape: torch.Size([200, 1]) var shape: torch.Size([200])
 ```
 
 
