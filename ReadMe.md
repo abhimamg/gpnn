@@ -29,7 +29,7 @@ pip install torch numpy matplotlib
 import torch
 import numpy as np
 import random
-from gaussian_process import GaussianProcess, RBFKernel
+from gpnn import GaussianProcess, RBFKernel, plot_gp_predictions
 
 # Set seeds for reproducibility
 seed = 42
@@ -59,7 +59,32 @@ optimizer = torch.optim.Adam(gp_rbf.parameters(), lr=0.05)
 epochs = 30
 
 for epoch in range(epochs):
+    # Perform a single optimization step.
     nll = gp_rbf.train_step(X_train, y_train, optimizer)
+
+    # Compute train and validation MSE.
+    train_pred, _ = gp_rbf.predict(X_train)
+    train_mse = (train_pred - y_train).pow(2).mean().item()
+
+    val_pred, _ = gp_rbf.predict(X_val)
+    val_mse = (val_pred - y_val).pow(2).mean().item()
+
+    if (epoch + 1) % 10 == 0:
+        print(f"Epoch {epoch+1}/{epochs}, NLL = {nll:.4f}, "
+                f"Train MSE = {train_mse:.4f}, Val MSE = {val_mse:.4f}")
+
+# Evaluate on validation set.
+mu_val, var_val = gp_rbf.predict(X_val)
+print("\nFinal Validation set predictions:")
+print("Mean shape:", mu_val.shape, "Var shape:", var_val.shape)
+
+# Predict on grid.
+mu_rbf, var_rbf = gp_rbf.predict(grid)
+print("RBF kernel - mean shape:", mu_rbf.shape, "var shape:", var_rbf.shape)
+
+# Plot using separate function.
+plot_gp_predictions(X_train, y_train, grid, mu_rbf, var_rbf,
+                    title="GP Regression with RBF Kernel - Uncertainty Visualization")
 
 ```
 
@@ -88,9 +113,22 @@ The model provides:
 * Training metrics (NLL, MSE)
 * Visualization of predictions with uncertainty bounds
 
+```
+Epoch 10/30, NLL = -89.4995, Train MSE = 0.0072, Val MSE = 0.0097
+Epoch 20/30, NLL = -105.1158, Train MSE = 0.0070, Val MSE = 0.0096
+Epoch 30/30, NLL = -118.8000, Train MSE = 0.0067, Val MSE = 0.0099
+
+Final Validation set predictions:
+Mean shape: torch.Size([20, 1]) Var shape: torch.Size([20])
+RBF kernel - mean shape: torch.Size([200, 1]) var shape: torch.Size([200])
+```
+
+
 ### Visualization
 The `plot_gp_predictions` function visualizes:
 
 * Training data points
 * Mean predictions
 * Uncertainty bounds (±2 standard deviations)
+
+![](uq.png)
